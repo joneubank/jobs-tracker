@@ -1,0 +1,84 @@
+{
+  "settings": {},
+  "mappings": {
+    "dynamic": "true",
+    "date_detection": true,
+    "properties": {
+      "abandoned": {
+        "type": "boolean"
+      },
+      "createdAt": {
+        "type": "date"
+      },
+      "id": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "inputs": {
+        "type": "object"
+      },
+      "name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "progress": {
+        "properties": {
+          "data": {
+            "type": "object"
+          },
+          "percent": {
+            "type": "long"
+          }
+        }
+      },
+      "service": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "status": {
+        "type": "keyword"
+      },
+      "updates": {
+        "properties": {
+          "service": {
+            "type": "keyword"
+          },
+          "name": {
+            "type": "keyword"
+          },
+          "node": {
+            "type": "keyword"
+          },
+          "id": {
+            "type": "keyword"
+          },
+          "eventTime": {
+            "type": "date"
+          },
+          "inputs": {
+            "type": "object",
+            "enabled": false
+          },
+          "type": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}
