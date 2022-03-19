@@ -10,49 +10,37 @@
       "createdAt": {
         "type": "date"
       },
+      "service": {
+        "type": "keyword"
+      },
+      "name": {
+        "type": "keyword"
+      },
+      "node": {
+        "type": "keyword"
+      },
       "id": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
+        "type": "keyword"
       },
       "inputs": {
         "type": "object"
       },
-      "name": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
+      "status": {
+        "type": "keyword"
       },
+
       "progress": {
         "properties": {
           "data": {
-            "type": "object"
+            "type": "object",
+            "enabled": false
           },
           "percent": {
             "type": "long"
           }
         }
       },
-      "service": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "status": {
-        "type": "keyword"
-      },
+
       "updates": {
         "properties": {
           "service": {
@@ -76,6 +64,17 @@
           },
           "type": {
             "type": "keyword"
+          },
+          "progress": {
+            "properties": {
+              "data": {
+                "type": "object",
+                "enabled": false
+              },
+              "percent": {
+                "type": "long"
+              }
+            }
           }
         }
       }
