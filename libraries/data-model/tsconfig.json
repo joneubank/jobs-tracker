@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": ["esnext"],
+    "module": "commonjs",
+    "strict": true,
+    
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    
+    "noImplicitAny": true,
+    "removeComments": true,
+    "strictNullChecks": true,
+    "preserveConstEnums": true,
+    
+    "outDir": "./dist",
+    "declaration": true,
+    "sourceMap": true
+  }
+}
