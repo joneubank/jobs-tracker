@@ -51,4 +51,6 @@ common/autoinstallers/*/.npmrc
 # Heft
 .heft
 
-**/dist/
+# Build outputs
+dist
+lib
