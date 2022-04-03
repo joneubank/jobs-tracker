@@ -16,11 +16,5 @@
   },
   "dependencies": {
     "winston": "^3.6.0"
-  },
-  "prettier": {
-    "trailingComma": "all",
-    "singleQuote": true,
-    "arrowFunctionParentheses": "always",
-    "printWidth": 120
   }
 }

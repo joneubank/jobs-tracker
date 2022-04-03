@@ -15,11 +15,5 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "logger": "workspace:*"
-  },
-  "prettier": {
-    "trailingComma": "all",
-    "singleQuote": true,
-    "arrowFunctionParentheses": "always",
-    "printWidth": 120
   }
 }
