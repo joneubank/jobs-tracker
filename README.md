@@ -29,9 +29,9 @@ This repo contains two published NPM libraries and one standalone docker image h
 | [data-model](libraries/data-model/) | Library | libraries/data-model/ | N/A | Common TypeScript types, validations, and utilities shared across server and client application.
 | [logger](libraries/logger/)         | Library | libraries/logger/     | N/A | Shared logger formatting across repo.
 
-### Quick Start: Jobs Tracker Dev
+### Quick Start: Jobs Tracker Server
 
-This quick start guide provides steps for installing and building the code base, running dependencies, and then running the job tracker server.
+This quick start guide provides steps for installing and building the code base, running dependencies, and then running the Job Tracker Server.
 
 > This docker setup is tested working on Mac (M1), may have issues in other environments.
 
@@ -39,25 +39,41 @@ This quick start guide provides steps for installing and building the code base,
 1. Install RushJS globally: `npm install -g @microsoft/rush`
 
 1. Update and Build all:
-```
-rush update
-rush build
-```
+    ```
+    rush update
+    rush build
+    ```
 
 1. Start deppendencies (Kafka, MongoDB and ElasticSearch) using docker-compose:
-```
-docker-compose up -d
-```
+    ```
+    docker-compose up -d
+    ```
 
-1. Navigate to tracker directory and run the application:
-```
-cd apps/tracker
-rushx start
-```
+1. Create a local environment file for the Job Tracking Server:
+  
+    1. Create a file named `.env` at `apps/tracker/.env`
+    1. Copy the following values into it to enable all features and connect to the docker MongoDB:
+        ```
+        ## Mongo
+        MONGO_USER=admin
+        MONGO_PASS=password
+
+        ## Feature
+        FEATURE_DEV_TESTING_ROUTES=true
+        FEATURE_KAFKA_CONNECTION=true
+        FEATURE_ES_SYNC=true
+        ```
+    1. All configurable environment variables are included in the file `apps/tracker/.env.schema`. Add any of these to the file for values you want to configure from the defaults.
+
+1. Navigate to tracker directory and run the Job Tracking Server:
+    ```
+    cd apps/tracker
+    rushx start
+    ```
+
 
 
 ## Planned Enhancements
 
-- Server Update API - no external queue dependency needed, can communicate directly over HTTP
 - Search API - query for jobs on ES
 - UI to explore tracked job status, using Search API
