@@ -54,3 +54,6 @@ common/autoinstallers/*/.npmrc
 # Build outputs
 dist
 lib
+
+# VSCode
+.vscode
