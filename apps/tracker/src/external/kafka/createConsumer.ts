@@ -52,7 +52,7 @@ function createConsumer(
         },
       })
       .catch((e) => {
-        logger.error('Failed to run consumer ' + e.message, e);
+        logger.error('Failed to run consumer', e);
         throw e;
       });
   };

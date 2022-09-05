@@ -1,12 +1,9 @@
 {
   "settings": {},
   "mappings": {
-    "dynamic": "true",
+    "dynamic": false,
     "date_detection": true,
     "properties": {
-      "abandoned": {
-        "type": "boolean"
-      },
       "createdAt": {
         "type": "date"
       },
@@ -41,7 +38,8 @@
         }
       },
 
-      "updates": {
+      "events": {
+        "type": "nested",
         "properties": {
           "service": {
             "type": "keyword"

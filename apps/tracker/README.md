@@ -7,12 +7,10 @@ This library includes all the code the powers the standalone [Jobs Tracker Serve
 
 ## Contents
 This library exposes the following components:
-* express router for the jobs query API
+* expressJS router for the jobs query API
 * Kafka message consumer client
 * processor for handling job update messages
-* library to interact with the MongoDB data directly
-* library to interact with the Elasticsearch indexed data directly
-* processors for syncing MongoDB data to Elasticsearch
+* processor for syncing MongoDB data to Elasticsearch
 
 ## Developer Guide
 

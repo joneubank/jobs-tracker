@@ -1,6 +1,6 @@
-import { JobDefinition, JobInputs } from '../job/types';
+import { JobDefinition, JobInputs, JobProgress } from '../job/types';
 
-export enum UpdateType {
+export enum EventType {
   Schedule = 'Schedule',
   Queue = 'Queue',
   Start = 'Start',
@@ -12,7 +12,7 @@ export enum UpdateType {
 
 export type CommonJobEvent = JobDefinition & {
   eventTime: Date;
-  type: UpdateType;
+  type: EventType;
   node?: string;
 };
 
@@ -23,33 +23,30 @@ export type InitialJobEvent = {
 
 export type ScheduleJobEvent = CommonJobEvent &
   InitialJobEvent & {
-    type: UpdateType.Schedule;
+    type: EventType.Schedule;
     scheduledStartTime: Date;
   };
 export type QueueJobEvent = CommonJobEvent &
   InitialJobEvent & {
-    type: UpdateType.Queue;
+    type: EventType.Queue;
   };
 export type StartJobEvent = CommonJobEvent &
   InitialJobEvent & {
-    type: UpdateType.Start;
+    type: EventType.Start;
   };
 export type ProgressJobEvent = CommonJobEvent & {
-  type: UpdateType.Progress;
-  progress: {
-    percent: number;
-    data?: object;
-  };
+  type: EventType.Progress;
+  progress: JobProgress;
 };
 export type CompleteJobEvent = CommonJobEvent & {
-  type: UpdateType.Complete;
+  type: EventType.Complete;
 };
 export type CancelJobEvent = CommonJobEvent & {
-  type: UpdateType.Cancel;
+  type: EventType.Cancel;
 };
 export type ErrorJobEvent = CommonJobEvent & {
-  type: UpdateType.Error;
-  errors: string[];
+  type: EventType.Error;
+  error: string;
 };
 
 export type JobEvent =

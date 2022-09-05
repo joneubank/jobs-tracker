@@ -1,15 +1,23 @@
 import * as kafka from './external/kafka';
 import * as server from './server';
+import * as mongo from './external/mongo';
 import * as elasticsearch from './external/elasticsearch';
 import Logger from 'logger';
 import config from './config';
-const logger = Logger('Index');
+const logger = Logger('Main');
 
 (async () => {
-  // Test ES Connection
+  // Connect to mongo
   logger.info('  =====  ');
-  logger.info('Initialize Elasticsearch Connection:');
-  await elasticsearch.getClient();
+  logger.info('Initialize Mongo:');
+  await mongo.connectDb();
+
+  // Test ES Connection
+  if (config.features.enableEsSync) {
+    logger.info('  =====  ');
+    logger.info('Initialize Elasticsearch Connection:');
+    await elasticsearch.getClient();
+  }
 
   // Connect to Kafka
   if (config.features.enableKafka) {

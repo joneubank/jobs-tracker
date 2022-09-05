@@ -1,16 +1,16 @@
-import { isDate, isString, isObjectLike, isNumber, isArray } from "lodash";
-import { JobDefinition } from "../job/types";
-import { CommonJobEvent, InitialJobEvent, JobEvent, UpdateType } from "./types";
+import { isDate, isString, isObjectLike, isNumber, isArray } from 'lodash';
+import { JobDefinition } from '../job/types';
+import { CommonJobEvent, InitialJobEvent, JobEvent, EventType } from './types';
 
-import Logger from "logger";
-const logger = Logger("Events.Validators");
+import Logger from 'logger';
+const logger = Logger('Events.Validators');
 
 function isCommonJobEvent(input: any): input is CommonJobEvent {
   return (
     isObjectLike(input) &&
     isDate(input.eventTime) &&
     isString(input.type) &&
-    Object.values(UpdateType).includes(input.type)
+    Object.values(EventType).includes(input.type)
   );
 }
 function isInitialJobEvent(input: any): input is InitialJobEvent {
@@ -52,23 +52,17 @@ function hasCancelJobEventProperties(input: any): boolean {
   return true;
 }
 function hasErrorJobEventProperties(input: any): boolean {
-  return (
-    isArray(input.errors) &&
-    (input.errors as any[]).reduce((acc, val) => acc && isString(val), true)
-  );
+  return isArray(input.errors) && (input.errors as any[]).reduce((acc, val) => acc && isString(val), true);
 }
 
-const eventPropertiesValidationMap: Record<
-  UpdateType,
-  (input: any) => boolean
-> = {
-  [UpdateType.Schedule]: hasScheduleJobEventProperties,
-  [UpdateType.Queue]: hasQueueJobEventProperties,
-  [UpdateType.Start]: hasStartJobEventProperties,
-  [UpdateType.Progress]: hasProgressJobEventProperties,
-  [UpdateType.Complete]: hasCompleteJobEventProperties,
-  [UpdateType.Cancel]: hasCancelJobEventProperties,
-  [UpdateType.Error]: hasErrorJobEventProperties,
+const eventPropertiesValidationMap: Record<EventType, (input: any) => boolean> = {
+  [EventType.Schedule]: hasScheduleJobEventProperties,
+  [EventType.Queue]: hasQueueJobEventProperties,
+  [EventType.Start]: hasStartJobEventProperties,
+  [EventType.Progress]: hasProgressJobEventProperties,
+  [EventType.Complete]: hasCompleteJobEventProperties,
+  [EventType.Cancel]: hasCancelJobEventProperties,
+  [EventType.Error]: hasErrorJobEventProperties,
 };
 
 export function isJobEvent(input: any): input is JobEvent {

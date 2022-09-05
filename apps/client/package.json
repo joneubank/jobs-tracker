@@ -1,7 +1,7 @@
 {
   "name": "@joneubank/jobs-tracker-client",
   "version": "1.0.0",
-  "description": "",
+  "description": "Library to send Job Status updates to Job Tracker server",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -17,6 +17,7 @@
   "dependencies": {
     "logger": "workspace:*",
     "data-model": "workspace:*",
-    "kafkajs": "~1.16.0"
+    "kafkajs": "~1.16.0",
+    "optionals": "workspace:*"
   }
 }

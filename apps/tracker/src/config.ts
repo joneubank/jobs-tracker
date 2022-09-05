@@ -7,16 +7,19 @@ dotenv.config();
 /**
  * Features
  */
-// Disabled by default
-const enableTestRoutes = process.env.FEATURE_DEV_TESTING_ROUTES_ENABLED === 'true';
+const enableTestRoutes = process.env.FEATURE_DEV_TESTING_ROUTES === 'true';
 if (enableTestRoutes) {
-  logger.warn('Feature Flag: Developer Test Enpoints are enabled');
+  logger.warn('🚩 Feature Flag: Developer Test Enpoints are enabled');
 }
 
-// Enabled by default
-const enableKafka = process.env.FEATURE_KAFKA_CONNECTION_DISABLE !== 'true';
-if (!enableKafka) {
-  logger.warn('Feature Flag: Kafka connections are disabled.');
+const enableKafka = process.env.FEATURE_KAFKA_CONNECTION === 'true';
+if (enableKafka) {
+  logger.warn('🚩 Feature Flag: Kafka Connections are enabled');
+}
+
+const enableEsSync = process.env.FEATURE_ES_SYNC === 'true';
+if (enableEsSync) {
+  logger.warn('🚩 Feature Flag: Elasticsearch Sync is enabled');
 }
 
 /**
@@ -50,13 +53,11 @@ const jobUpdatesTopic = process.env.KAFKA_JOBUPDATES_TOPIC || 'jobs-tracker-upda
 type AppConfig = {
   elasticsearch: {
     node: string;
-    basicAuth?: {
+    auth?: {
       username: string;
       password: string;
     };
-    indexName: string;
-    createIndex: boolean;
-    repository?: string;
+    index: string;
   };
   kafka: {
     broker: string;
@@ -68,12 +69,18 @@ type AppConfig = {
       jobUpdates: KafkaTopicConfiguration;
     };
   };
+  mongo: {
+    host: string;
+    user?: string;
+    pass?: string;
+  };
   server: {
     port: number;
   };
   features: {
     enableTestRoutes: boolean;
     enableKafka: boolean;
+    enableEsSync: boolean;
   };
 };
 
@@ -86,11 +93,9 @@ const esAuth =
     : undefined;
 const config: AppConfig = {
   elasticsearch: {
-    node: process.env.ES_NODE || 'http://localhost:9200',
-    basicAuth: esAuth,
-    indexName: process.env.INDEX_NAME || 'jobs-tracker-status',
-    createIndex: process.env.CREATE_SAMPLE_INDEX !== 'false', // true unless set to 'false'
-    repository: process.env.ES_SNAPSHOT_REPOSITORY,
+    node: process.env.ES_HOST || 'http://localhost:9200',
+    auth: esAuth,
+    index: process.env.ES_INDEX || 'jobs-tracker-status',
   },
   kafka: {
     broker: process.env.KAFKA_BROKER || 'localhost:9092',
@@ -109,12 +114,18 @@ const config: AppConfig = {
       },
     },
   },
+  mongo: {
+    host: process.env.MONGO_URL || 'mongodb://localhost:27017/jobs',
+    user: process.env.MONGO_USER,
+    pass: process.env.MONGO_PASS,
+  },
   server: {
     port: Number(process.env.PORT) || 3211,
   },
   features: {
     enableTestRoutes,
     enableKafka,
+    enableEsSync,
   },
 };
 

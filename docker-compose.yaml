@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  mongo:
+    container_name: jobs_tracker_mongo
+    image: 'bitnami/mongodb:4.0'
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/bitnami
+    environment:
+      MONGODB_USERNAME: admin
+      MONGODB_PASSWORD: password
+      MONGODB_DATABASE: jobs
+      MONGODB_ROOT_PASSWORD: password123
+
+  elasticsearch:
+    container_name: jobs_tracker_es
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    ports:
+      - 9200:9200
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - cluster.name=files.elasticsearch
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx2048m'
+      - path.repo=/usr/share/elasticsearch
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    hostname: zookeeper
+    platform: linux/amd64
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+    networks:
+      - kafka_net
+
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - 9092:9092
+    expose:
+      - 29092
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_BROKER_ID: 1
+    restart: always
+    networks:
+      - kafka_net
+
+volumes:
+  mongo_data:
+    name: jobs_tracker_mongo_data
+    driver: local
+  es_data:
+    name: jobs_tracker_es_data
+    driver: local
+
+networks:
+  kafka_net:
+    driver: bridge

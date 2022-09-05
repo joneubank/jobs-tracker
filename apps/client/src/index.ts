@@ -1,24 +1,29 @@
+import { randomUUID } from 'crypto';
+import { JobInputs, EventType } from 'data-model';
 import { KafkaConfig } from 'kafkajs';
 import * as kafka from './external/kafka';
-import { TrackedJob, JobOptions } from './types';
-export type JobTrackerClientConfig = {
-  kafka: KafkaConfig;
+import { TrackedJob } from './TrackedJob';
+
+export { TrackedJob } from './TrackedJob';
+
+export type JobsTrackerClientConfig = {
+  kafka: { config: KafkaConfig; topic: string };
   service: string;
   node?: string;
 };
 
-export type JobTrackerClient = {
-  createJob: (name: string, id?: string, options?: JobOptions) => TrackedJob;
-  listJobs: (name?: string) => TrackedJob[];
-  getJob: (id: string) => TrackedJob | undefined;
-};
+async function createClient(config: JobsTrackerClientConfig) {
+  const kafkaClient = await kafka.getKafkaClient(config.kafka.topic, config.kafka.config);
 
-async function createJobTrackerClient(config: JobTrackerClientConfig): Promise<JobTrackerClient | {}> {
-  await kafka.setup(config.kafka);
+  const createJob = (jobName: string, options: { id?: string; inputs?: JobInputs } = {}): TrackedJob => {
+    return new TrackedJob(
+      kafkaClient,
+      { id: options.id || randomUUID(), name: jobName, service: config.service },
+      { node: config.node, inputs: options.inputs },
+    );
+  };
 
-  const jobs: Record<string, TrackedJob> = {};
-
-  return {};
+  return { createJob };
 }
 
-export default createJobTrackerClient;
+export default createClient;

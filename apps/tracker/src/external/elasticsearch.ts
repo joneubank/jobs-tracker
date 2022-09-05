@@ -2,41 +2,54 @@ import { Client } from '@elastic/elasticsearch';
 import esMapping from '../resources/job_updates_status-mapping.json';
 import config from '../config';
 import Logger from 'logger';
+import { ServiceStatus } from './types';
 const logger = Logger('Elasticsearch');
 
 let esClient: Client;
 
-export async function getClient() {
+export let connectionStatus: ServiceStatus = ServiceStatus.Unknown;
+
+export async function getClient(): Promise<Client> {
   if (esClient) {
     return esClient;
   }
   logger.info('Creating ES Client');
   esClient = new Client({
     node: config.elasticsearch.node,
-    auth: config.elasticsearch.basicAuth,
+    auth: config.elasticsearch.auth,
   });
 
-  logger.info('Testing ES Connection...');
-  await esClient.ping();
-  logger.info('ES Connection successful');
+  await checkConnectionStatus();
 
-  if (config.elasticsearch.createIndex) {
-    logger.info(`Ensuring index exsists: ${config.elasticsearch.indexName}`);
-    const indexExists = await checkIndexExists(config.elasticsearch.indexName);
-    if (indexExists) {
-      logger.info(`Index already exists`);
-    } else {
-      logger.info(`Index does not exist, creating...`);
-      await createIndex(config.elasticsearch.indexName);
-      logger.info(`Index created`);
-    }
+  logger.info(`Ensuring index exsists: ${config.elasticsearch.index}`);
+  const indexExists = await checkIndexExists(config.elasticsearch.index);
+  if (indexExists) {
+    logger.info(`Index already exists`);
+  } else {
+    logger.info(`Index does not exist, creating...`);
+    await createIndex(config.elasticsearch.index);
+    logger.info(`Index created`);
   }
 
   logger.info('ES Client ready');
   return esClient;
 }
 
-export const checkIndexExists = async (index: string): Promise<boolean> => {
+export async function checkConnectionStatus(): Promise<boolean> {
+  logger.info('Testing ES Connection...');
+  const response = await esClient.ping();
+  if (response.statusCode && response.statusCode >= 200 && response?.statusCode < 300) {
+    logger.info('ES Connection successful');
+    connectionStatus = ServiceStatus.Connected;
+    return true;
+  } else {
+    logger.error('Unable to connect to ElasticSearch.');
+    connectionStatus = ServiceStatus.Error;
+    return false;
+  }
+}
+
+export async function checkIndexExists(index: string): Promise<boolean> {
   try {
     logger.debug(`Checking ES for index: ${index}`);
     await esClient.indices.get({
@@ -53,9 +66,9 @@ export const checkIndexExists = async (index: string): Promise<boolean> => {
       throw e;
     }
   }
-};
+}
 
-export const createIndex = async (index: string) => {
+export async function createIndex(index: string) {
   try {
     logger.info(`Creating index ${index}`);
     await esClient.indices.create({
@@ -70,4 +83,4 @@ export const createIndex = async (index: string) => {
       throw e;
     }
   }
-};
+}

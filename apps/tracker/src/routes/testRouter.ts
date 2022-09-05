@@ -2,9 +2,9 @@ import * as express from 'express';
 import config from '../config';
 import parseJobUpdateEvent from '../external/kafka/consumers/eventParsers/parseJobUpdateEvent';
 import Logger from 'logger';
-import { isJobEvent } from 'data-model/dist/event/validators';
-import { isJobDefinition } from 'data-model/dist/job/validators';
-import * as jobService from '../services/jobService';
+import { getJobId, isJobEvent, isJobDefinition } from 'data-model';
+import * as eventService from '../services/eventService';
+import * as dbService from '../services/dbService';
 import wrapAsync from '../utils/wrapAsync';
 const logger = Logger('Route.Test');
 
@@ -18,6 +18,9 @@ router.use((_req, res, next) => {
   }
 });
 
+/**
+ * Send Job Event to server
+ */
 router.post(
   '/event',
   wrapAsync(async (req, res) => {
@@ -27,7 +30,7 @@ router.post(
     if (!isJobEvent(event)) {
       res.status(400).json({ message: `Invalid event provided` });
     } else {
-      const job = await jobService.updateJob(event);
+      const job = await eventService.handleUpdateEvent(event);
       res.json(job);
     }
   }),
@@ -40,16 +43,21 @@ router.get(
     if (!isJobDefinition(jobDefinition)) {
       res.status(400).json({ message: `Invalid input parameters` });
     } else {
-      const maybeJob = await jobService.fetchJob(jobDefinition);
-      if (maybeJob) {
-        res.json(maybeJob);
+      const jobResult = await dbService.getJob(jobDefinition);
+      if (jobResult.ok) {
+        res.json(jobResult.value);
+      } else {
+        res.status(404).json({ message: `No Job found with ID: ${getJobId(jobDefinition)}` });
       }
-      res.status(404).json({ message: `No Job found with ID: ${jobService.getJobId(jobDefinition)}` });
     }
   }),
 );
 
-let x = 1,
-  y;
+// router.get(
+//   '/job/:service',
+//   wrapAsync(async (req, res) => {
+
+//   }),
+// );
 
 export default router;

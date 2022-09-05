@@ -1,6 +1,6 @@
 # Jobs Tracker
 
-Collect in a single service the status of jobs running throughout your system.
+Collect in a single service the status of jobs running on services in your system.
 
 The **[server](apps/server)** application will receive status updates for jobs running on other services. These updates can be provided through an API or through integration with Kafka. The status of all jobs will be stored in a MongoDB and can optionally be replicated to Elasticsearch to enable custom search interfaces.
 
@@ -18,7 +18,7 @@ To get started working with the code in this repo, you can read the [Getting Sta
 
 ### Components and Dependency Tree
 
-This repo contains two published NPM libraries and one standalone docker image hosted on ghcr, as well as several shared libraries:
+This repo contains two published NPM libraries and one standalone docker image hosted on GitHub Container Registry, as well as several shared libraries:
 
 ![Job Tracker Monorepo Dependency Tree](resources/MonoRepo%20Dependency%20Tree.png)
 
@@ -31,6 +31,11 @@ This repo contains two published NPM libraries and one standalone docker image h
 
 ### Quick Start: Jobs Tracker Dev
 
+This quick start guide provides steps for installing and building the code base, running dependencies, and then running the job tracker server.
+
+> This docker setup is tested working on Mac (M1), may have issues in other environments.
+
+
 1. Install RushJS globally: `npm install -g @microsoft/rush`
 
 1. Update and Build all:
@@ -39,7 +44,17 @@ rush update
 rush build
 ```
 
-1. TODO: Run tracker and demo app in dev mode with auto building?
+1. Start deppendencies (Kafka, MongoDB and ElasticSearch) using docker-compose:
+```
+docker-compose up -d
+```
+
+1. Navigate to tracker directory and run the application:
+```
+cd apps/tracker
+rushx start
+```
+
 
 ## Planned Enhancements
 

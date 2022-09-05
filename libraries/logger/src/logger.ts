@@ -18,6 +18,8 @@
  */
 import { createLogger, LoggerOptions, transports, format } from 'winston';
 
+import { unknownToString } from './utils';
+
 const { combine, timestamp, colorize, printf } = format;
 const options: LoggerOptions = {
   format: combine(
@@ -36,18 +38,19 @@ const options: LoggerOptions = {
 const logger = createLogger(options);
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.debug('[Logger] Logging initialized at debug level');
+  logger.debug('[JobsTracker.Logger] Logging initialized at debug level');
 }
 
 export default (service: string) => {
-  const buildServiceMessage = (...messages: (string | object)[]) => {
-    const strings: string[] = messages.map((m) => (typeof m === 'object' ? JSON.stringify(m) : m));
-    return `[${service}] ${strings.join(' - ')}`;
+  type LogPartialMessage = string | number | boolean | object | unknown;
+  const buildServiceMessage = (...messages: LogPartialMessage[]) => {
+    const strings: string[] = messages.map(unknownToString);
+    return `[${['JobsTracker', service].join('.')}] ${strings.join(' - ')}`;
   };
   return {
-    debug: (...messages: (string | object)[]) => logger.debug(buildServiceMessage(...messages)),
-    info: (...messages: (string | object)[]) => logger.info(buildServiceMessage(...messages)),
-    warn: (...messages: (string | object)[]) => logger.warn(buildServiceMessage(...messages)),
-    error: (message: string | object, ...meta: any[]) => logger.error(buildServiceMessage(message), ...meta),
+    debug: (...messages: LogPartialMessage[]) => logger.debug(buildServiceMessage(...messages)),
+    info: (...messages: LogPartialMessage[]) => logger.info(buildServiceMessage(...messages)),
+    warn: (...messages: LogPartialMessage[]) => logger.warn(buildServiceMessage(...messages)),
+    error: (...messages: LogPartialMessage[]) => logger.error(buildServiceMessage(...messages)),
   };
 };

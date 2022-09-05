@@ -10,9 +10,9 @@ Three easy steps to start using this library to start tracking your jobs:
 
 1. Import and create client. See the API for all configuration details, but you will at minimum need to provide the name of the service (`demo-application` in the example) and Kafka broker connection details
     ```typescript
-    import createJobTracker from '@joneubank/job-tracker-client';
+    import createJobsTracker from '@joneubank/job-tracker-client';
 
-    const jobTrackerClient = createJobTracker({
+    const jobsTrackerClient = createJobsTracker({
       kafka: {
         brokers: ['localhost:9092'],
         clientId: 'demo-application-job-tracker-client',
@@ -27,7 +27,7 @@ Three easy steps to start using this library to start tracking your jobs:
     ```typescript
     async function longRunningJob(args: LongRunningJobInputs) {
       // Create a TrackedJob
-      const job = await jobTrackerClient.createJob({ name: 'longRunningJob', inputs: args });
+      const job = await jobsTrackerClient.createJob({ name: 'longRunningJob', inputs: args });
 
       try {
         // Do some work

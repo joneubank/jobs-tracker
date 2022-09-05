@@ -7,6 +7,7 @@ export enum JobStatus {
   Completed = 'Completed',
   Canceled = 'Canceled',
   Error = 'Error',
+  Abandoned = 'Abandoned',
 }
 
 export type JobDefinition = {
@@ -17,12 +18,13 @@ export type JobDefinition = {
 
 export type JobProgress = {
   percent: number;
-  data?: object;
+  data?: Record<string, string | number | boolean | undefined>;
 };
 
 export type JobInputs = Record<string, string | number | boolean | undefined>;
 
-export type Job = JobDefinition & {
+export interface Job extends JobDefinition {
+  // _id: never; // Confirms that this job isn't an ES or MongoDB document
   status: JobStatus;
 
   node?: string;
@@ -30,6 +32,7 @@ export type Job = JobDefinition & {
   inputs: JobInputs;
 
   createdAt: Date;
+  updatedAt: Date;
   startedAt?: Date;
   completedAt?: Date;
   cancelledAt?: Date;
@@ -38,8 +41,6 @@ export type Job = JobDefinition & {
   scheduledStartTime?: Date;
 
   progress: JobProgress;
-  updates: JobEvent[];
-  errors: string[];
-
-  abandoned: boolean;
-};
+  events: JobEvent[];
+  error?: string;
+}
