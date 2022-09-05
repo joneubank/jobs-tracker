@@ -63,14 +63,13 @@ This quick start guide provides steps for installing and building the code base,
         FEATURE_KAFKA_CONNECTION=true
         FEATURE_ES_SYNC=true
         ```
-    1. All configurable environment variables are included in the file `apps/tracker/.env.schema`. Add any of these to the file for values you want to configure from the defaults.
+    1. All configurable environment variables are included in the file [`apps/tracker/.env.schema`](apps/tracker/.env.schema). Add any of these to the file for values you want to configure from the defaults.
 
 1. Navigate to tracker directory and run the Job Tracking Server:
     ```
     cd apps/tracker
     rushx start
     ```
-
 
 
 ## Planned Enhancements
